@@ -16,6 +16,8 @@
 
 //! XCM configuration for Rococo.
 
+use crate::validator_manager::_GeneratedPrefixForStorageValidatorsToAdd;
+
 use super::{
 	parachains_origin, AccountId, Balances, CouncilCollective, ParaId, Runtime, RuntimeCall,
 	RuntimeEvent, RuntimeOrigin, WeightToFee, XcmPallet,
@@ -99,11 +101,15 @@ pub type XcmRouter = (
 	xcm_sender::ChildParachainRouter<Runtime, XcmPallet>,
 );
 
+
+
 parameter_types! {
 	pub const Rococo: MultiAssetFilter = Wild(AllOf { fun: WildFungible, id: Concrete(RocLocation::get()) });
 	pub const Statemine: MultiLocation = Parachain(1000).into();
 	pub const Contracts: MultiLocation = Parachain(1002).into();
 	pub const Encointer: MultiLocation = Parachain(1003).into();
+	pub const OurChain: MultiLocation = Parachain(2000).into();
+	pub const OurChain2: MultiLocation = Parachain(2001).into();
 	pub const Tick: MultiLocation = Parachain(100).into();
 	pub const Trick: MultiLocation = Parachain(110).into();
 	pub const Track: MultiLocation = Parachain(120).into();
@@ -113,6 +119,8 @@ parameter_types! {
 	pub const RococoForStatemine: (MultiAssetFilter, MultiLocation) = (Rococo::get(), Statemine::get());
 	pub const RococoForContracts: (MultiAssetFilter, MultiLocation) = (Rococo::get(), Contracts::get());
 	pub const RococoForEncointer: (MultiAssetFilter, MultiLocation) = (Rococo::get(), Encointer::get());
+	pub const RococoForOurChain: (MultiAssetFilter, MultiLocation) = (Rococo::get(), OurChain::get());
+	pub const RococoForOurChain2: (MultiAssetFilter, MultiLocation) = (Rococo::get(), OurChain2::get());
 }
 pub type TrustedTeleporters = (
 	xcm_builder::Case<RococoForTick>,
@@ -121,11 +129,18 @@ pub type TrustedTeleporters = (
 	xcm_builder::Case<RococoForStatemine>,
 	xcm_builder::Case<RococoForContracts>,
 	xcm_builder::Case<RococoForEncointer>,
+	xcm_builder::Case<RococoForOurChain>,
+	xcm_builder::Case<RococoForOurChain2>,
+	xcm_builder::NativeAsset,
 );
 
 match_types! {
 	pub type OnlyParachains: impl Contains<MultiLocation> = {
 		MultiLocation { parents: 0, interior: X1(Parachain(_)) }
+	};
+	pub type MyParachains: impl Contains<MultiLocation> = {
+		MultiLocation { parents: 0, interior: X1(Parachain(2000)) } |
+		MultiLocation { parents: 0, interior: X1(Parachain(2001)) }
 	};
 }
 
@@ -136,7 +151,7 @@ pub type Barrier = (
 	// If the message is one that immediately attemps to pay for execution, then allow it.
 	AllowTopLevelPaidExecutionFrom<Everything>,
 	// Messages coming from system parachains need not pay for execution.
-	AllowUnpaidExecutionFrom<IsChildSystemParachain<ParaId>>,
+	AllowUnpaidExecutionFrom<Everything>,
 	// Expected responses are OK.
 	AllowKnownQueryResponses<XcmPallet>,
 	// Subscriptions for version tracking are OK.

@@ -176,8 +176,7 @@ parameter_types! {
 	));
 	pub const TeleConcreteFung: (MultiAssetFilter, MultiLocation) =
 		(Wild(AllOf { fun: WildFungible, id: Concrete(Here.into()) }), ChildTeleporter::get());
-	pub const RsrvConcreteFung: (MultiAssetFilter, MultiLocation) =
-		(Wild(AllOf { fun: WildFungible, id: Concrete(Here.into()) }), ChildTeleporter::get());
+	pub const RsrvConcreteFung: (MultiAssetFilter, MultiLocation) =(Wild(AllOf { fun: WildFungible, id: Concrete(Here.into()) }), ChildTeleporter::get());
 }
 
 impl xcm_balances_benchmark::Config for Test {

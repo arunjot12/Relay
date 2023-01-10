@@ -59,7 +59,11 @@ impl Default for MultiLocation {
 	fn default() -> Self {
 		Self { parents: 0, interior: Junctions::Here }
 	}
+
 }
+
+
+
 
 /// A relative location which is constrained to be an interior location of the context.
 ///

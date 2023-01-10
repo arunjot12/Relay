@@ -22,7 +22,7 @@ use xcm::latest::{AssetId::Concrete, MultiAsset, MultiAssetFilter, MultiLocation
 use xcm_executor::traits::FilterAssetLocation;
 
 /// Accepts an asset iff it is a native asset.
-pub struct NativeAsset;
+pub struct NativeAsset;	
 impl FilterAssetLocation for NativeAsset {
 	fn filter_asset_location(asset: &MultiAsset, origin: &MultiLocation) -> bool {
 		log::trace!(target: "xcm::filter_asset_location", "NativeAsset asset: {:?}, origin: {:?}", asset, origin);
